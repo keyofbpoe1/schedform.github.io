@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule a Tutoring Session</title>
+    <style>
+        body {
+            background-color: #f0ebf8;
+        }
+        .mhead {
+            padding: 10px;
+            color: #fff;
+            background-color: #3e4456;
+            margin-bottom: 30px;
+        }
+        .headcont {
+            width: fit-content;
+            margin: 0 auto;
+        }
+        .redspan {
+            color: red;
+        }
+        .form-center {
+            display:flex;
+            justify-content: center;
+        }
+        .sFormClass {
+            background-color: #fff;
+            padding: 50px;
+            border-radius: 50px;
+        }
+        .sFormClass, .sFormClass input, .sFormClass textarea, .mhead, .mfoot {
+            font-family: Lato, sans-serif;
+            font-size: 15pt;
+            font-style: normal;
+            font-weight: 400;
+        }
+        .sFormClass label {
+            line-height: 2;
+        }
+        .sFormClass input {
+            width: 300px;
+        }
+        .sFormClass .reqClass::after { 
+            content: "*";
+            color: red;
+        }
+        .sFormClass hr {
+            margin-top: 30px;
+        }
+        input[type="submit"] {
+            width: 100px;
+            margin-top: 20px;
+        }
+        .clearformclass {
+            float: right;
+            margin-top: 20px;
+        }
+        .mfoot {
+            display:flex;
+            justify-content: space-evenly;
+            padding: 10px;
+            color: #fff;
+            background-color: #3e4456;
+            margin-top: 30px;
+        }
+        .mfoot a {
+            color: #fff;
+        }
+    </style>
+    
+    <script>
+    
+        let dInt = 3600000;
+
+        let setRefresh = () => {
+
+            let allInps = document.querySelectorAll('.clearable');
+            for (let index = 0; index < allInps.length; index++) {
+                allInps[index].value = null                
+            }
+
+            let d = new Date();
+            d.setMinutes(00);
+            setDt('sstart', d);
+
+            document.getElementById('tname').focus();
+
+        }
+    
+    
+        let setDt = (fd, dt) => {
+            let d = new Date(dt);
+            let dPlus = d - (d.getTimezoneOffset()*60*1000) + dInt;
+            let newDt = new Date(dPlus);
+    
+            document.getElementById(fd).value = newDt.toISOString().slice(0,-8);
+    
+            if (fd === 'sstart') {
+                setDt('ssend', document.getElementById(fd).value);
+            }
+    
+            getDInt();
+        }
+    
+        let getDInt = () => {
+            dInt = 
+            (new Date(document.getElementById('ssend').value))
+            -
+            (new Date(document.getElementById('sstart').value));
+        }
+    
+    
+        let valEnd = () => {
+            let dDif = (new Date(document.getElementById('ssend').value)) - (new Date(document.getElementById('sstart').value));
+            if (dDif < 0) {
+                alert('End Date must be after Start Date!');
+                setDt('ssend', document.getElementById('sstart').value);
+            }
+            else {
+                getDInt();
+            }
+        }
+    
+        let formPreSub = () => {
+    
+            let sD = new Date(document.getElementById('sstart').value);
+            let eD = new Date(document.getElementById('ssend').value);
+            let phone1, phone2, phone3;
+            if(document.getElementById("tphone").value.length > 9) {
+              phone1 = document.getElementById("tphone").value.replace(/\D/gmi, '');
+              phone2 = phone1.slice(0,3) + '-' + phone1.slice(3);
+              phone3 = phone2.slice(0,7) + '-' + phone2.slice(7);
+            }
+            else {
+              phone3 = null;
+            }
+    
+            document.getElementById("hidnm").value = document.getElementById("tname").value;
+            document.getElementById("hidtp").value = document.getElementById("ttype").value;
+            document.getElementById("hideml").value = document.getElementById("temail").value;
+            document.getElementById("hidphn").value = phone3;
+            document.getElementById("hidsnm").value = document.getElementById("sname").value;
+            document.getElementById("hidseml").value = document.getElementById("semail").value;
+            document.getElementById("hidpnm").value = document.getElementById("pname").value;
+            document.getElementById("hidpeml").value = document.getElementById("pemail").value;
+            document.getElementById("hidnts").value = document.getElementById("notes").value;
+    
+            document.getElementById("hidshr").value = sD.getHours();
+            document.getElementById("hidsmns").value = sD.getMinutes();
+            document.getElementById("hidsyr").value = sD.getFullYear();
+            document.getElementById("hidsmnth").value = (sD.getMonth() + 1);
+            document.getElementById("hidsday").value = sD.getDate();
+    
+            document.getElementById("hidehr").value = eD.getHours();
+            document.getElementById("hidemns").value = eD.getMinutes();
+            document.getElementById("hideyr").value = eD.getFullYear();
+            document.getElementById("hidemnth").value = (eD.getMonth() + 1);
+            document.getElementById("hideday").value = eD.getDate();
+    
+            return true;
+    
+        }
+    
+        window.addEventListener(
+            'load',
+            setRefresh
+        );
+    
+    </script>
+</head>
+<body>
+    <div class="mhead">
+        <div class="headcont">
+            <h1>Schedule a Tutoring Session</h1>
+            <p class="redspan">* Indicates required field</p>
+        </div>
+    </div>
+    
+    <div class="form-center">
+        <form class="sFormClass" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLScRnpb6oJlCFqE4PvoXH0DXnevwjYqB3lcwHOFcpV8OG-dHFg/formResponse" onsubmit="return formPreSub()" method="post">
+    
+            <label for="tname" class="reqClass">Your Name</label><br>
+            <input class="clearable" type="text" id="tname" name="tname" required><br>
+    
+            <hr>
+    
+            <label for="ttype" class="reqClass">Session Type</label><br>
+            <input class="clearable" type="text" id="ttype" name="ttype" placeholder="Algebra, Physics, Biology, Etc." required><br>
+    
+            <hr>
+    
+            <label for="temail" class="reqClass">Your Email</label><br>
+            <input class="clearable" type="email" id="temail" name="temail" required><br>
+    
+            <hr>
+    
+            <label for="tphone">Your Phone</label><br>
+            <input class="clearable" type="tel" id="tphone" name="tphone" pattern="^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.\-]?\d{3}[\s.\-]?\d{4}$"><br>
+    
+            <hr>
+    
+            <label for="sstart" class="reqClass">Session Start (date and time)</label><br>
+            <input type="datetime-local" id="sstart" name="sstart" required onchange="setDt('ssend', this.value)"><br>
+    
+            <hr>
+    
+            <label for="ssend" class="reqClass">Session End (date and time)</label><br>
+            <input type="datetime-local" id="ssend" name="ssend" required onchange="valEnd()"><br>
+    
+            <hr>
+    
+            <label for="sname" class="reqClass">Student's Name</label><br>
+            <input class="clearable" type="text" id="sname" name="sname" required><br>
+    
+            <hr>
+    
+            <label for="semail" class="reqClass">Student's Email</label><br>
+            <input class="clearable" type="email" id="semail" name="semail" required><br>
+    
+            <hr>
+    
+            <label for="pname" class="reqClass">Parent's Name</label><br>
+            <input class="clearable" type="text" id="pname" name="pname" required><br>
+    
+            <hr>
+    
+            <label for="pemail" class="reqClass">Parent's Email</label><br>
+            <input class="clearable" type="email" id="pemail" name="pemail" required><br>
+    
+            <hr>
+    
+            <label for="notes">Notes</label><br>
+            <textarea class="clearable" name="notes" id="notes" cols="50" rows="5"></textarea><br>
+    
+            <input type="hidden" id="hidnm" name="entry.1166607760">
+            <input type="hidden" id="hidtp" name="entry.1333594614">
+            <input type="hidden" id="hideml" name="entry.1510854314">
+            <input type="hidden" id="hidphn" name="entry.651259328">
+            <input type="hidden" id="hidsnm" name="entry.303415050">
+            <input type="hidden" id="hidseml" name="entry.626325307">
+            <input type="hidden" id="hidpnm" name="entry.1017337892">
+            <input type="hidden" id="hidpeml" name="entry.865419460">
+            <input type="hidden" id="hidnts" name="entry.1432095145">
+            <input type="hidden" id="hidshr" name="entry.177047512_hour">
+            <input type="hidden" id="hidsmns" name="entry.177047512_minute">
+            <input type="hidden" id="hidsyr" name="entry.177047512_year">
+            <input type="hidden" id="hidsmnth" name="entry.177047512_month">
+            <input type="hidden" id="hidsday" name="entry.177047512_day">
+            <input type="hidden" id="hidehr" name="entry.1606562729_hour">
+            <input type="hidden" id="hidemns" name="entry.1606562729_minute">
+            <input type="hidden" id="hideyr" name="entry.1606562729_year">
+            <input type="hidden" id="hidemnth" name="entry.1606562729_month">
+            <input type="hidden" id="hideday" name="entry.1606562729_day">
+    
+            <hr>
+    
+            <input type="submit" value="Submit">
+            <a href="javascript:setRefresh();" class="clearformclass">Clear Form</a>
+    
+        </form>
+    </div>
+    <div class="mfoot">
+        <p><a href="https://adeptprep.com/">ADEPTPREP.COM</a></p>
+        <p>|</p>
+        <p>202-230-0287</p>
+        <p>|</p>
+        <p><a href="mailto:INFO@ADEPTPREP.COM">INFO@ADEPTPREP.COM</a></p>
+    </div>
+</body>
+</html>
