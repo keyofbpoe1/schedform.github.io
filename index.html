@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schedule a Tutoring Session</title>
+    <link rel="icon" type="image/x-icon" href="https://images.squarespace-cdn.com/content/v1/5689a18f1115e06a4a29fa3b/1452743900446-6YG3M4EQ3SVYIHO0NL62/favicon.ico"/>
     <style>
         body {
             background-color: #f0ebf8;
@@ -17,6 +18,9 @@
         .headcont {
             width: fit-content;
             margin: 0 auto;
+        }
+        .headcont h1 {
+            text-align: center;
         }
         .redspan {
             color: red;
@@ -124,43 +128,55 @@
         }
     
         let formPreSub = () => {
-    
+
+            let goNoGo = true;
+
+            let curD = new Date();
             let sD = new Date(document.getElementById('sstart').value);
-            let eD = new Date(document.getElementById('ssend').value);
-            let phone1, phone2, phone3;
-            if(document.getElementById("tphone").value.length > 9) {
-              phone1 = document.getElementById("tphone").value.replace(/\D/gmi, '');
-              phone2 = phone1.slice(0,3) + '-' + phone1.slice(3);
-              phone3 = phone2.slice(0,7) + '-' + phone2.slice(7);
+
+            if (sD - curD < 86400000) {
+                goNoGo = confirm('WARNING: You have scheduled this session less than 24 hours in advance!\n\nTo ensure proper communication/billing, it is best practice to schedule sessions A MINIMUM of 24 hours in advance.\n\nAre you sure you want to continue?');
+            }
+
+            if (goNoGo) {
+                let eD = new Date(document.getElementById('ssend').value);
+                let phone1, phone2, phone3;
+                if(document.getElementById("tphone").value.length > 9) {
+                phone1 = document.getElementById("tphone").value.replace(/\D/gmi, '');
+                phone2 = phone1.slice(0,3) + '-' + phone1.slice(3);
+                phone3 = phone2.slice(0,7) + '-' + phone2.slice(7);
+                }
+                else {
+                phone3 = null;
+                }
+        
+                document.getElementById("hidnm").value = document.getElementById("tname").value;
+                document.getElementById("hidtp").value = document.getElementById("ttype").value;
+                document.getElementById("hideml").value = document.getElementById("temail").value;
+                document.getElementById("hidphn").value = phone3;
+                document.getElementById("hidsnm").value = document.getElementById("sname").value;
+                document.getElementById("hidseml").value = document.getElementById("semail").value;
+                document.getElementById("hidpnm").value = document.getElementById("pname").value;
+                document.getElementById("hidpeml").value = document.getElementById("pemail").value;
+                document.getElementById("hidnts").value = document.getElementById("notes").value;
+        
+                document.getElementById("hidshr").value = sD.getHours();
+                document.getElementById("hidsmns").value = sD.getMinutes();
+                document.getElementById("hidsyr").value = sD.getFullYear();
+                document.getElementById("hidsmnth").value = (sD.getMonth() + 1);
+                document.getElementById("hidsday").value = sD.getDate();
+        
+                document.getElementById("hidehr").value = eD.getHours();
+                document.getElementById("hidemns").value = eD.getMinutes();
+                document.getElementById("hideyr").value = eD.getFullYear();
+                document.getElementById("hidemnth").value = (eD.getMonth() + 1);
+                document.getElementById("hideday").value = eD.getDate();
+        
+                return true;
             }
             else {
-              phone3 = null;
+                return false
             }
-    
-            document.getElementById("hidnm").value = document.getElementById("tname").value;
-            document.getElementById("hidtp").value = document.getElementById("ttype").value;
-            document.getElementById("hideml").value = document.getElementById("temail").value;
-            document.getElementById("hidphn").value = phone3;
-            document.getElementById("hidsnm").value = document.getElementById("sname").value;
-            document.getElementById("hidseml").value = document.getElementById("semail").value;
-            document.getElementById("hidpnm").value = document.getElementById("pname").value;
-            document.getElementById("hidpeml").value = document.getElementById("pemail").value;
-            document.getElementById("hidnts").value = document.getElementById("notes").value;
-    
-            document.getElementById("hidshr").value = sD.getHours();
-            document.getElementById("hidsmns").value = sD.getMinutes();
-            document.getElementById("hidsyr").value = sD.getFullYear();
-            document.getElementById("hidsmnth").value = (sD.getMonth() + 1);
-            document.getElementById("hidsday").value = sD.getDate();
-    
-            document.getElementById("hidehr").value = eD.getHours();
-            document.getElementById("hidemns").value = eD.getMinutes();
-            document.getElementById("hideyr").value = eD.getFullYear();
-            document.getElementById("hidemnth").value = (eD.getMonth() + 1);
-            document.getElementById("hideday").value = eD.getDate();
-    
-            return true;
-    
         }
     
         window.addEventListener(
@@ -174,6 +190,10 @@
     <div class="mhead">
         <div class="headcont">
             <h1>Schedule a Tutoring Session</h1>
+            <p><b>PLEASE SUBMIT THIS FORM A MINIMUM OF 24 HOURS PRIOR TO YOUR TUTORING SESSION!</b></p>
+            <p>This form is required for scheduling, billing, and payroll purposes. Please fill it out as thoroughly and accurately as possible.</p>
+            <p>Once submitted, it will generate a meeting invite for you and your student, as well as send out the automated reminder email to their parents (24 hours prior to the session).</p>
+            <br>
             <p class="redspan">* Indicates required field</p>
         </div>
     </div>
