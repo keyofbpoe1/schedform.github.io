@@ -53,6 +53,12 @@
         .sFormClass hr {
             margin-top: 30px;
         }
+        #recdiv {
+            margin-left: 50px;
+        }
+        #recdiv input {
+            width: auto;
+        }
         input[type="submit"] {
             width: 100px;
             margin-top: 20px;
@@ -71,6 +77,9 @@
         }
         .mfoot a {
             color: #fff;
+        }
+        .hidthing {
+            display: none;
         }
     </style>
     
@@ -126,6 +135,15 @@
                 getDInt();
             }
         }
+
+        let setRecur = (ischecked) => {
+            if (ischecked) {
+                document.getElementById('recnumdiv').classList.remove('hidthing');
+            }
+            else {
+                document.getElementById('recnumdiv').classList.add('hidthing');
+            }
+        }
     
         let formPreSub = () => {
 
@@ -159,6 +177,13 @@
                 document.getElementById("hidpnm").value = document.getElementById("pname").value;
                 document.getElementById("hidpeml").value = document.getElementById("pemail").value;
                 document.getElementById("hidnts").value = document.getElementById("notes").value;
+
+                document.getElementById("hidrec").value = 'No';
+                if (document.getElementById("rrecur").checked == true) {
+                    document.getElementById("hidrec").value = 'Yes';
+                }                
+
+                document.getElementById("hidnumsess").value = document.getElementById("rquant").value;
         
                 document.getElementById("hidshr").value = sD.getHours();
                 document.getElementById("hidsmns").value = sD.getMinutes();
@@ -222,12 +247,22 @@
             <hr>
     
             <label for="sstart" class="reqClass">Session Start (date and time)</label><br>
-            <input type="datetime-local" id="sstart" name="sstart" required onchange="setDt('ssend', this.value)"><br>
-    
-            <hr>
-    
+            <input type="datetime-local" id="sstart" name="sstart" required onchange="setDt('ssend', this.value)"><br><br>
+
             <label for="ssend" class="reqClass">Session End (date and time)</label><br>
-            <input type="datetime-local" id="ssend" name="ssend" required onchange="valEnd()"><br>
+            <input type="datetime-local" id="ssend" name="ssend" required onchange="valEnd()"><br><br>
+
+            <div id="recdiv">
+
+                <input type="checkbox" id="rrecur" name="rrecur" value="rrecur" onclick="setRecur(this.checked)">
+                <label for="rrecur"> Add Weekly Recurrence</label><br>
+                
+                <div id="recnumdiv" class="hidthing">
+                    <label for="rquant" class="reqClass">How many sessions would you like to schedule?</label><br>
+                    <input type="number" id="rquant" name="rquant" min="1" max="10" value="1">
+                </div>
+                
+            </div>
     
             <hr>
     
@@ -273,6 +308,8 @@
             <input type="hidden" id="hideyr" name="entry.1606562729_year">
             <input type="hidden" id="hidemnth" name="entry.1606562729_month">
             <input type="hidden" id="hideday" name="entry.1606562729_day">
+            <input type="hidden" id="hidrec" name="entry.1224678451">
+            <input type="hidden" id="hidnumsess" name="entry.1947027104">
     
             <hr>
     
