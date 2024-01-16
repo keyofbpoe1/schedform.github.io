@@ -97,6 +97,9 @@
 
         let setRefresh = () => {
 
+            document.getElementById('rrecur').checked = false;
+            setRecur();
+
             for (let index = 1; index < dCounter + 1; index++) {
                 let element = document.getElementById(`sessdatesdiv${index}`);
                 element.remove();                
@@ -158,6 +161,7 @@
                 document.getElementById('recnumdiv').classList.remove('hidthing');
             }
             else {
+                document.getElementById('rquant').value = 1;
                 document.getElementById('recnumdiv').classList.add('hidthing');
             }
         }
