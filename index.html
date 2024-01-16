@@ -34,7 +34,7 @@
             padding: 50px;
             border-radius: 50px;
         }
-        .sFormClass, .sFormClass input, .sFormClass textarea, .mhead, .mfoot {
+        .sFormClass, .sFormClass input, .sFormClass textarea, .mhead, .mfoot, button {
             font-family: Lato, sans-serif;
             font-size: 15pt;
             font-style: normal;
@@ -81,13 +81,29 @@
         .hidthing {
             display: none;
         }
+        h6 {
+            margin-block-start: 0;
+            margin-block-end: 0;
+            font-style: italic;
+            color: red;
+        }
     </style>
     
     <script>
     
-        let dInt = 3600000;
+        let dCounter = 0;
+        
+        let dInt = [3600000];
 
         let setRefresh = () => {
+
+            for (let index = 1; index < dCounter + 1; index++) {
+                let element = document.getElementById(`sessdatesdiv${index}`);
+                element.remove();                
+            }
+
+            dCounter = 0;
+            dInt = [3600000];
 
             let allInps = document.querySelectorAll('.clearable');
             for (let index = 0; index < allInps.length; index++) {
@@ -95,44 +111,45 @@
             }
 
             let d = new Date();
-            d.setMinutes(00);
-            setDt('sstart', d);
+            d.setMinutes(0o0);
+            let dPlus = d - (d.getTimezoneOffset()*60*1000) + dInt[0];
+            let newDt = new Date(dPlus);
+            document.getElementById('sessdatesdiv0').querySelector('.sstart').value = newDt.toISOString().slice(0,-8);
+            setDt(0, document.getElementById('sessdatesdiv0').querySelector('.sstart').value);
 
             document.getElementById('tname').focus();
 
         }
-    
-    
-        let setDt = (fd, dt) => {
+
+        let setDt = (ind, dt) => {
+
             let d = new Date(dt);
-            let dPlus = d - (d.getTimezoneOffset()*60*1000) + dInt;
+            let dPlus = d - (d.getTimezoneOffset()*60*1000) + dInt[ind];
             let newDt = new Date(dPlus);
-    
-            document.getElementById(fd).value = newDt.toISOString().slice(0,-8);
-    
-            if (fd === 'sstart') {
-                setDt('ssend', document.getElementById(fd).value);
-            }
-    
-            getDInt();
+            document.getElementById(`sessdatesdiv${ind}`).querySelector('.ssend').value = newDt.toISOString().slice(0,-8);
+
+            getDInt(ind);
         }
-    
-        let getDInt = () => {
-            dInt = 
-            (new Date(document.getElementById('ssend').value))
+
+        let getDInt = (ind) => {
+            dInt[ind] = 
+            (new Date(document.getElementById(`sessdatesdiv${ind}`).querySelector('.ssend').value))
             -
-            (new Date(document.getElementById('sstart').value));
+            (new Date(document.getElementById(`sessdatesdiv${ind}`).querySelector('.sstart').value));
         }
-    
-    
-        let valEnd = () => {
-            let dDif = (new Date(document.getElementById('ssend').value)) - (new Date(document.getElementById('sstart').value));
+
+
+        let valEnd = (ind) => {
+            let dDif = 
+                (new Date(document.getElementById(`sessdatesdiv${ind}`).querySelector('.ssend').value))
+                -
+                (new Date(document.getElementById(`sessdatesdiv${ind}`).querySelector('.sstart').value));
             if (dDif < 0) {
                 alert('End Date must be after Start Date!');
-                setDt('ssend', document.getElementById('sstart').value);
+                setDt(ind, document.getElementById(`sessdatesdiv${ind}`).querySelector('.sstart').value);
             }
             else {
-                getDInt();
+                getDInt(ind);
             }
         }
 
@@ -144,28 +161,51 @@
                 document.getElementById('recnumdiv').classList.add('hidthing');
             }
         }
+
+        let addSessFunc = () => {
+            let sessdiv = document.getElementById(`sessdatesdiv${dCounter}`);
+            dCounter++;
+            let myClone = sessdiv.cloneNode(true);
+            myClone.id = `sessdatesdiv${dCounter}`;
+            myClone.setAttribute('data-ind', dCounter);
+            sessdiv.insertAdjacentElement("afterend", myClone);
+            getDInt(dCounter)
+        }
     
         let formPreSub = () => {
+
+            let stDtsArr = [];
+            let sessArr = [];
+            for (let index = 0; index < dCounter + 1; index++) {
+                let nSD = new Date(document.getElementById(`sessdatesdiv${index}`).querySelector('.sstart').value);
+                let nED = new Date(document.getElementById(`sessdatesdiv${index}`).querySelector('.ssend').value);
+                let newEvt = {startDate: nSD.toISOString(), endDate: nED.toISOString()};
+                stDtsArr.push(nSD.toISOString());
+                sessArr.push(newEvt);              
+            }
+
+            console.log(sessArr);
+            stDtsArr.sort();
 
             let goNoGo = true;
 
             let curD = new Date();
-            let sD = new Date(document.getElementById('sstart').value);
+            let sD = new Date(stDtsArr[0]);
 
             if (sD - curD < 86400000) {
                 goNoGo = confirm('WARNING: You have scheduled this session less than 24 hours in advance!\n\nTo ensure proper communication/billing, it is best practice to schedule sessions A MINIMUM of 24 hours in advance.\n\nAre you sure you want to continue?');
             }
 
             if (goNoGo) {
-                let eD = new Date(document.getElementById('ssend').value);
+
                 let phone1, phone2, phone3;
                 if(document.getElementById("tphone").value.length > 9) {
-                phone1 = document.getElementById("tphone").value.replace(/\D/gmi, '');
-                phone2 = phone1.slice(0,3) + '-' + phone1.slice(3);
-                phone3 = phone2.slice(0,7) + '-' + phone2.slice(7);
+                    phone1 = document.getElementById("tphone").value.replace(/\D/gmi, '');
+                    phone2 = phone1.slice(0,3) + '-' + phone1.slice(3);
+                    phone3 = phone2.slice(0,7) + '-' + phone2.slice(7);
                 }
                 else {
-                phone3 = null;
+                    phone3 = null;
                 }
         
                 document.getElementById("hidnm").value = document.getElementById("tname").value;
@@ -184,18 +224,12 @@
                 }                
 
                 document.getElementById("hidnumsess").value = document.getElementById("rquant").value;
-        
-                document.getElementById("hidshr").value = sD.getHours();
-                document.getElementById("hidsmns").value = sD.getMinutes();
-                document.getElementById("hidsyr").value = sD.getFullYear();
-                document.getElementById("hidsmnth").value = (sD.getMonth() + 1);
-                document.getElementById("hidsday").value = sD.getDate();
-        
-                document.getElementById("hidehr").value = eD.getHours();
-                document.getElementById("hidemns").value = eD.getMinutes();
-                document.getElementById("hideyr").value = eD.getFullYear();
-                document.getElementById("hidemnth").value = (eD.getMonth() + 1);
-                document.getElementById("hideday").value = eD.getDate();
+
+                let sessObj = {
+                    sessions: sessArr
+                }
+                let sessJSON = JSON.stringify(sessObj);
+                document.getElementById("hidsessjson").value = sessJSON;
         
                 return true;
             }
@@ -245,20 +279,35 @@
             <input class="clearable" type="tel" id="tphone" name="tphone" pattern="^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.\-]?\d{3}[\s.\-]?\d{4}$"><br>
     
             <hr>
-    
-            <label for="sstart" class="reqClass">Session Start (date and time)</label><br>
-            <input type="datetime-local" id="sstart" name="sstart" required onchange="setDt('ssend', this.value)"><br><br>
 
-            <label for="ssend" class="reqClass">Session End (date and time)</label><br>
-            <input type="datetime-local" id="ssend" name="ssend" required onchange="valEnd()"><br><br>
+            <div id="sessdatesdiv0" data-ind="0">
+
+                <label class="reqClass">Session Start (date and time)</label><br>
+                <input type="datetime-local" class="sstart" required onchange="setDt(this.parentNode.getAttribute('data-ind'), this.value)"><br><br>
+
+                <label class="reqClass">Session End (date and time)</label><br>
+                <input type="datetime-local" class="ssend" required onchange="valEnd(this.parentNode.getAttribute('data-ind'))"><br><br>
+
+            </div>
+            
 
             <div id="recdiv">
 
+                <button type="button" onclick="addSessFunc()">Add Another Session</button>
+
+                <br>
+
                 <input type="checkbox" id="rrecur" name="rrecur" value="rrecur" onclick="setRecur(this.checked)">
-                <label for="rrecur"> Add Weekly Recurrence</label><br>
+                <label for="rrecur"> Add Weekly Recurrence</label>
+
+                <br>
+
+                <h6>Recurrence will be added to ALL sessions scheduled above.</h6>
+                
+                <br>
                 
                 <div id="recnumdiv" class="hidthing">
-                    <label for="rquant" class="reqClass">How many sessions would you like to schedule?</label><br>
+                    <label for="rquant" class="reqClass">How many weeks would you like to schedule?</label><br>
                     <input type="number" id="rquant" name="rquant" min="1" max="10" value="1">
                 </div>
                 
@@ -298,18 +347,9 @@
             <input type="hidden" id="hidpnm" name="entry.1017337892">
             <input type="hidden" id="hidpeml" name="entry.865419460">
             <input type="hidden" id="hidnts" name="entry.1432095145">
-            <input type="hidden" id="hidshr" name="entry.177047512_hour">
-            <input type="hidden" id="hidsmns" name="entry.177047512_minute">
-            <input type="hidden" id="hidsyr" name="entry.177047512_year">
-            <input type="hidden" id="hidsmnth" name="entry.177047512_month">
-            <input type="hidden" id="hidsday" name="entry.177047512_day">
-            <input type="hidden" id="hidehr" name="entry.1606562729_hour">
-            <input type="hidden" id="hidemns" name="entry.1606562729_minute">
-            <input type="hidden" id="hideyr" name="entry.1606562729_year">
-            <input type="hidden" id="hidemnth" name="entry.1606562729_month">
-            <input type="hidden" id="hideday" name="entry.1606562729_day">
             <input type="hidden" id="hidrec" name="entry.1224678451">
             <input type="hidden" id="hidnumsess" name="entry.1947027104">
+            <input type="hidden" id="hidsessjson" name="entry.1147291115">
     
             <hr>
     
