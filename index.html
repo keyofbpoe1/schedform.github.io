@@ -87,6 +87,14 @@
             font-style: italic;
             color: red;
         }
+        .sessdatesdiv {
+            border-bottom: 1px dashed #3e4456;
+            width: 75%;
+            margin-bottom: 10px;
+        }
+        .sessdatesdiv input, .sessdatesdiv label {
+            margin-left: 20px;
+        }
     </style>
     
     <script>
@@ -221,6 +229,7 @@
                 document.getElementById("hidpnm").value = document.getElementById("pname").value;
                 document.getElementById("hidpeml").value = document.getElementById("pemail").value;
                 document.getElementById("hidnts").value = document.getElementById("notes").value;
+                document.getElementById("hiddisc").value = document.getElementById("sdisc").value;
 
                 document.getElementById("hidrec").value = 'No';
                 if (document.getElementById("rrecur").checked == true) {
@@ -284,7 +293,7 @@
     
             <hr>
 
-            <div id="sessdatesdiv0" data-ind="0">
+            <div id="sessdatesdiv0" data-ind="0" class="sessdatesdiv">
 
                 <label class="reqClass">Session Start (date and time)</label><br>
                 <input type="datetime-local" class="sstart" required onchange="setDt(this.parentNode.getAttribute('data-ind'), this.value)"><br><br>
@@ -338,6 +347,11 @@
             <input class="clearable" type="email" id="pemail" name="pemail" required><br>
     
             <hr>
+
+            <label for="sdisc">Discount (for session packages, etc.)</label><br>
+            <input class="clearable" type="number" min="0" max="100" id="sdisc" name="sdisc" id="myPercent" style="width: auto;"/> %
+    
+            <hr>
     
             <label for="notes">Notes</label><br>
             <textarea class="clearable" name="notes" id="notes" cols="50" rows="5"></textarea><br>
@@ -354,6 +368,7 @@
             <input type="hidden" id="hidrec" name="entry.1224678451">
             <input type="hidden" id="hidnumsess" name="entry.1947027104">
             <input type="hidden" id="hidsessjson" name="entry.1147291115">
+            <input type="hidden" id="hiddisc" name="entry.1176378493">
     
             <hr>
     
