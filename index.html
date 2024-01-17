@@ -34,7 +34,7 @@
             padding: 50px;
             border-radius: 50px;
         }
-        .sFormClass, .sFormClass input, .sFormClass textarea, .mhead, .mfoot, button {
+        .sFormClass, .sFormClass input, .sFormClass textarea, .mhead, .mfoot, button, select {
             font-family: Lato, sans-serif;
             font-size: 15pt;
             font-style: normal;
@@ -229,7 +229,7 @@
                 document.getElementById("hidpnm").value = document.getElementById("pname").value;
                 document.getElementById("hidpeml").value = document.getElementById("pemail").value;
                 document.getElementById("hidnts").value = document.getElementById("notes").value;
-                document.getElementById("hiddisc").value = document.getElementById("sdisc").value.toString();
+                document.getElementById("hiddisc").value = `${document.getElementById("sdisc").value.toString()} ${document.getElementById("sdiscunits").value}`;
 
                 document.getElementById("hidrec").value = 'No';
                 if (document.getElementById("rrecur").checked == true) {
@@ -349,7 +349,12 @@
             <hr>
 
             <label for="sdisc">Discount (for session packages, etc.)</label><br>
-            <input class="clearable" type="number" min="0" max="100" id="sdisc" name="sdisc" id="myPercent" style="width: auto;"/> %
+            <input class="clearable" type="number" min="0" max="100" id="sdisc" name="sdisc" id="myPercent" style="width: auto;"/>
+
+            <select name="sdiscunits" id="sdiscunits">
+                <option value="%" selected>%</option>
+                <option value="$">$</option>
+              </select>
     
             <hr>
     
